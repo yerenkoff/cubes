@@ -73,14 +73,17 @@
 				raycaster.setFromCamera( mouse, camera );    
 
 				var intersects = raycaster.intersectObjects( scene.children );
-				document.getElementById("cubeNumber").innerHTML = "Номер кубика: " + (intersects[ 0 ] != undefined ? intersects[ 0 ].object.userData.n : '');
-				document.getElementById("cubeColor").innerHTML = "Цвет грани: " + (intersects[ 0 ] != undefined ? "rgb("+Object.keys(intersects[ 0 ].face.color).map((el) => Math.round(intersects[ 0 ].face.color[el]*100) + "%").join(", ") + ")" : "");
-				for ( var i = 0; i < intersects.length; i++ ) {
-					intersects[ 0 ].face.color.setHex(0x770077); 
-					intersects[ 0 ].object.geometry.colorsNeedUpdate = true;
-
+				if (intersects[ 0 ] != undefined) {
+					document.getElementById("cubeNumber").innerHTML = "Номер кубика: " + intersects[ 0 ].object.userData.n;
+					document.getElementById("cubeColor").innerHTML = "Цвет грани: " + "rgb("+Object.keys(intersects[ 0 ].face.color).map((el) => Math.round(intersects[ 0 ].face.color[el]*100) + "%").join(", ") + ")";
+					var color = JSON.stringify(Object.keys(intersects[ 0 ].face.color).map((el) => intersects[ 0 ].face.color[el]));
+					for (var f = 0; f < intersects[ 0 ].object.geometry.faces.length; f++) {
+						JSON.stringify(Object.keys(intersects[ 0 ].object.geometry.faces[f].color).map((el) => intersects[ 0 ].object.geometry.faces[f].color[el]))
+						== color ?
+						(intersects[ 0 ].face.color.setHex(0x770077), intersects[ 0 ].object.geometry.faces[f].color.setHex(0x770077)) : null;
+						intersects[ 0 ].object.geometry.colorsNeedUpdate = true;
+					}
 				}
-
 			}
 
 			var animate = function () {
