@@ -33,8 +33,8 @@
 		var controls = new THREE.OrbitControls(camera, renderer.domElement);
 		controls.target.set(6, 8, 0);
 			var colors = {
-				"Purple": 0x00aa00,
-				"Yellow": 0xaaaa00,
+				"Purple": 0x01f0f0,
+				"Yellow": 0xff77cc,
 				"Red": 0xFF0000,
 				"Olive": 0x808000,
 				"Blue": 0x0000FF,
@@ -44,7 +44,6 @@
 			var meshCounter = 0;
 			for (var c = 0; c<25; c++) {
 				var geometry = new THREE.BoxGeometry(2,2,2);
-
 				for ( var i = 0; i < geometry.faces.length; i ++ ) {
 					var face = geometry.faces[ i ];
 					face.color.setHex(colors[Object.keys(colors)[counter]]);
