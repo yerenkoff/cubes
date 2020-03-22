@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>My first three.js app</title>
+	<style>
+		body { margin: 0; }
+		canvas { display: block; }
+		section {
+			position: absolute;
+			top: 0;
+			left: 0;
+			background: #fff;
+			padding: 0 50px;
+		}
+	</style>
+</head>
+<body>
+	<section>
+		<h3 id="cubeNumber">Номер кубика:</h3>
+		<h4 id="cubeColor">Цвет грани:</h4>
+	</section>
+	<script src="three.js"></script>
+	<script src="OrbitControls.js"></script>
+	<script>
+		var scene = new THREE.Scene();
+		var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+
+		var renderer = new THREE.WebGLRenderer();
+		renderer.setSize( window.innerWidth, window.innerHeight );
+		document.body.appendChild( renderer.domElement );
+		var materials = [
+
+		]
+
+		var controls = new THREE.OrbitControls(camera, renderer.domElement);
+			var colors = {
+				"Purple": 0x00aa00,
+				"Yellow": 0xaaaa00,
+				"Red": 0xFF0000,
+				"Olive": 0x808000,
+				"Blue": 0x0000FF,
+				"Green": 0x008000,
+			}
+			var counter = 0;
+			var meshCounter = 0;
+			for (var c = 0; c<25; c++) {
+				var geometry = new THREE.BoxGeometry(2,2,2);
+
+				for ( var i = 0; i < geometry.faces.length; i ++ ) {
+					var face = geometry.faces[ i ];
+					face.color.setHex(colors[Object.keys(colors)[counter]]);
+					counter = i%2 ? (counter + 1) : counter;
+				}
+				counter = 0;
+				var material = new THREE.MeshBasicMaterial({vertexColors: THREE.FaceColors});
+
+				var cube = new THREE.Mesh( geometry, material );
+				meshCounter = c%5 ? meshCounter : meshCounter + 3;
+				cube.position.set(c%5 * 3, meshCounter, 0);
+				cube.userData = {n:c+1};
+				scene.add( cube );
+			}
+
+			camera.position.set(6, 8, 15);
+			var raycaster, mouse = { x : 0, y : 0 };
+			raycaster = new THREE.Raycaster();
+			mouse = new THREE.Vector2();
+			renderer.domElement.addEventListener( 'click', onDocumentMouseDown, false );
+
+			function onDocumentMouseDown ( e ) {
+
+				mouse.x = ( e.clientX / window.innerWidth ) * 2 - 1;
+				mouse.y = - ( e.clientY / window.innerHeight ) * 2 + 1;
+
+				raycaster.setFromCamera( mouse, camera );    
+
+				var intersects = raycaster.intersectObjects( scene.children );
+				document.getElementById("cubeNumber").innerHTML = "Номер кубика: " + (intersects[ 0 ] != undefined ? intersects[ 0 ].object.userData.n : '');
+				document.getElementById("cubeColor").innerHTML = "Цвет грани: " + (intersects[ 0 ] != undefined ? "rgb("+Object.keys(intersects[ 0 ].face.color).map((el) => Math.round(intersects[ 0 ].face.color[el]*100) + "%").join(", ") + ")" : "");
+				for ( var i = 0; i < intersects.length; i++ ) {
+					console.log( intersects[ i ].object.userData.n, intersects[ i ].face.color ); 
+					intersects[ 0 ].face.color.setHex(0x770077); 
+					intersects[ 0 ].object.geometry.colorsNeedUpdate = true;
+
+				}
+
+			}
+
+			var animate = function () {
+				requestAnimationFrame( animate );
+				renderer.render( scene, camera );
+			};
+
+			animate();
+		</script>
+	</body>
+	</html>
