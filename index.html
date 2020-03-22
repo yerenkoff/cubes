@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<title>My first three.js app</title>
+	<title>Cubes</title>
 	<style>
 		body { margin: 0; }
 		canvas { display: block; }
@@ -27,11 +27,11 @@
 		var scene = new THREE.Scene();
 		var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
 
-		var renderer = new THREE.WebGLRenderer();
+		var renderer = new THREE.WebGLRenderer({antialias: true});
 		renderer.setSize( window.innerWidth, window.innerHeight );
-		document.body.appendChild( renderer.domElement );
-
+		document.body.appendChild(renderer.domElement);
 		var controls = new THREE.OrbitControls(camera, renderer.domElement);
+		controls.target.set(6, 8, 0);
 			var colors = {
 				"Purple": 0x00aa00,
 				"Yellow": 0xaaaa00,
@@ -77,7 +77,6 @@
 				document.getElementById("cubeNumber").innerHTML = "Номер кубика: " + (intersects[ 0 ] != undefined ? intersects[ 0 ].object.userData.n : '');
 				document.getElementById("cubeColor").innerHTML = "Цвет грани: " + (intersects[ 0 ] != undefined ? "rgb("+Object.keys(intersects[ 0 ].face.color).map((el) => Math.round(intersects[ 0 ].face.color[el]*100) + "%").join(", ") + ")" : "");
 				for ( var i = 0; i < intersects.length; i++ ) {
-					console.log( intersects[ i ].object.userData.n, intersects[ i ].face.color ); 
 					intersects[ 0 ].face.color.setHex(0x770077); 
 					intersects[ 0 ].object.geometry.colorsNeedUpdate = true;
 
